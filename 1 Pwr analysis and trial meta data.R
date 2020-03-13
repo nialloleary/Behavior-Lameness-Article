@@ -1,9 +1,8 @@
+#Data available from https://1drv.ms/u/s!ArQRQHPfDmtggaRXMwHHQhvUbyI-Tw?e=wAyfXN
 
-home<- "C:/Users/olearyn2/OneDrive/Behavior Paper data" 
+home<- "C:/Users/olearyn2/OneDrive/Behavior Paper data" # where data is locally
 
 setwd(home)
-# location of Lameness files on your computer - 
-#Data available from https://1drv.ms/u/s!ArQRQHPfDmtggaRXMwHHQhvUbyI-Tw?e=wAyfXN
 
 {
    library(dplyr); library(data.table);library(tibble);library("Hmisc")
