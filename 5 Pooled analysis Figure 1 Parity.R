@@ -1,0 +1,126 @@
+library(broom); library(QuantPsyc); library(ggplot2)
+
+PoolA<-rbind.data.frame(SumDataList[[1]],SumDataList[[3]],
+                        SumDataList[[4]],# 3.a
+                        SumDataList[[6]]) #4a
+PoolA<-PoolA[,1:16]
+
+#create a table and attached standarised coefficient
+#create a table and attached standarised coefficient
+PTa<- data.frame(matrix(ncol = 3, nrow = 14))
+colnames(PTa)<-c('var','Estimate','pval')
+
+for (i in 2:15){
+  PTa[i-1,1]<-(names(PoolA[i]))
+  mod<-tidy((glm(scale(PoolA$loco)~scale(PoolA[,i])+as.factor(PoolA$Lse))))# standardised coefficients
+  
+  PTa[i-1,2]<-(mod$estimate[2])
+  
+  PTa[i-1,3]<-(mod$p.value[2])
+}
+setwd(home)
+write.csv(x = PTa,file = "Table4 Aggregated.csv")
+
+summary(lm(PoolA$loco~PoolA$STANDUP+as.factor(PoolA$Lse)))
+summary(lm(PoolA$loco~PoolA$LAYINGCOUNTER+as.factor(PoolA$Lse)))
+cor.test(PoolA$STANDUP,PoolA$LAYINGCOUNTER)
+
+sum(PoolA$loco==0)
+sum(PoolA$loco==1)
+sum(PoolA$loco==2)
+sum(PoolA$loco==3)
+
+#plot activity locomotion  score
+
+
+
+#issues with legend due to need to reshape data?
+names(PoolA)
+chartDF<-PoolA[,c(1,11,16)]
+chartDF[chartDF$Lse==1,1]<-'1.a'
+chartDF[chartDF$Lse==3,1]<-'2'
+chartDF[chartDF$Lse==4,1]<-'3.a'
+chartDF[chartDF$Lse==6,1]<-'4.a'
+
+
+ggplot(chartDF,aes(x=factor(chartDF$loco), y=(chartDF$LAYINGCOUNTER)))+ 
+  geom_boxplot()+
+  geom_jitter(aes(color=factor(chartDF$Lse),width = 0.05,height = 0))+
+  labs(x = "Mobility Score",y='Laying Counter',color='Trial',title='Mobility and laying counter')+ theme(panel.background = element_blank())
+
+#Parity
+
+PoolA<-rbind.data.frame(SumDataList[[1]],SumDataList[[3]],
+                        SumDataList[[4]],# 3.a
+                        SumDataList[[6]]) 
+                      
+names(PoolA)
+PoolA<-PoolA[,c(1:16,21)]
+names(ParityData)[1]<-'Cow.ID'
+
+PoolC<-left_join(PoolA,ParityData,'Cow.ID')
+PoolC[(PoolC$Cow.ID==8308),15:19]
+PoolD<-PoolC[-c(29,48),-c(17,18)]
+
+names(PoolD)
+
+summary(lm(PoolD$loco~PoolD$LactYr+PoolD$Lse))
+
+
+CorMat <- rcorr(as.matrix(PoolD),type = 'spearman')
+
+#r
+DFCor<-rownames_to_column(as.data.frame(CorMat[1]))
+CorList[[8]]<-as.data.frame(DFCor[,c(1:2,18)])
+
+#n - values
+DFCor<-rownames_to_column(as.data.frame(CorMat[2]))
+numList[[8]]<-as.data.frame(DFCor[,c(1:2,18)])
+
+#p-values
+DFCor<-rownames_to_column(as.data.frame(CorMat[3]))
+pList[[8]]<-as.data.frame(DFCor[,c(1:2,18)])
+
+
+
+summary(PoolD$LactYr)
+
+JE<-PoolD[PoolD$Lse==1,]
+HF17<-PoolD[PoolD$Lse==3,]
+HF18<-PoolD[PoolD$Lse==4,]
+Comm<-PoolD[PoolD$Lse==6,]
+sum(na.omit(JE$LactYr==1))
+sum(na.omit(JE$LactYr==2))
+sum(na.omit(JE$LactYr==3))
+sum(na.omit(JE$LactYr==4))
+sum(na.omit(JE$LactYr==5))
+sum(na.omit(JE$LactYr==6))
+sum(na.omit(JE$LactYr==7))
+
+sum(na.omit(HF17$LactYr==1))
+sum(na.omit(HF17$LactYr==2))
+sum(na.omit(HF17$LactYr==3))
+sum(na.omit(HF17$LactYr==4))
+sum(na.omit(HF17$LactYr==5))
+sum(na.omit(HF17$LactYr==6))
+sum(na.omit(HF17$LactYr==7))
+
+
+sum(na.omit(HF18$LactYr==1))
+sum(na.omit(HF18$LactYr==2))
+sum(na.omit(HF18$LactYr==3))
+sum(na.omit(HF18$LactYr==4))
+sum(na.omit(HF18$LactYr==5))
+sum(na.omit(HF18$LactYr==6))
+sum(na.omit(HF18$LactYr==7))
+
+sum(na.omit(Comm$LactYr==1))
+sum(na.omit(Comm$LactYr==2))
+sum(na.omit(Comm$LactYr==3))
+sum(na.omit(Comm$LactYr==4))
+
+
+summary(JE$LactYr)
+summary(HF17$LactYr)
+summary(HF18$LactYr)
+summary(Comm$LactYr)
