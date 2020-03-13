@@ -1,6 +1,5 @@
 #This script calculates the ratio of day to night total summaries of behaviour.
 
-    #All needed?
     CorList<-vector(mode ="list" ,(nrow(Meta)+3))
     numList<-vector(mode ="list" ,(nrow(Meta)+3))
     pList<-vector(mode ="list" ,(nrow(Meta)+3))
