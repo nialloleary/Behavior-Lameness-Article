@@ -1,14 +1,36 @@
-library(broom); library(QuantPsyc); library(ggplot2)
+library(broom); library(QuantPsyc); library(ggplot2)3
+
+
 
 PoolA<-rbind.data.frame(SumDataList[[1]],SumDataList[[3]],
                         SumDataList[[4]],# 3.a
                         SumDataList[[6]]) #4a
-PoolA<-PoolA[,1:16]
+PoolB<-rbind.data.frame(SumDataList[[2]],SumDataList[[3]],
+                        SumDataList[[5]],# 3.a
+                        SumDataList[[7]]) #4a
 
+PoolA<-PoolA[,1:16]
+PoolB<-PoolB[,1:16]
+
+#T test between 0 and 2 ----
+Pool0<-PoolA[PoolA$loco==0,]
+Pool2<-PoolA[PoolA$loco==2,]
+names(PoolA)
+
+Tres<-vector(mode ="list" ,14)
+for (i in 2:15){
+  iRes<-t.test(Pool0[,i],Pool2[i,])
+  Tres[i]<-iRes$p.value
+}
+#test results 11, 10
+Tres
+#lm analysis----
 #create a table and attached standarised coefficient
 #create a table and attached standarised coefficient
 PTa<- data.frame(matrix(ncol = 3, nrow = 14))
+PTb<- data.frame(matrix(ncol = 3, nrow = 14))
 colnames(PTa)<-c('var','Estimate','pval')
+colnames(PTb)<-c('var','Estimate','pval')
 
 for (i in 2:15){
   PTa[i-1,1]<-(names(PoolA[i]))
@@ -18,8 +40,19 @@ for (i in 2:15){
   
   PTa[i-1,3]<-(mod$p.value[2])
 }
+
+for (i in 2:15){
+  PTb[i-1,1]<-(names(PoolB[i]))
+  mod<-tidy((glm(scale(PoolB$loco)~scale(PoolB[,i])+as.factor(PoolB$Lse))))# standardised coefficients
+  
+  PTb[i-1,2]<-(mod$estimate[2])
+  
+  PTb[i-1,3]<-(mod$p.value[2])
+}
+
+PTc<-cbind.data.frame(PTa,PTb)
 setwd(home)
-write.csv(x = PTa,file = "Table4 Aggregated.csv")
+write.csv(x = PTc,file = "Table4 Aggregated.csv")
 
 summary(lm(PoolA$loco~PoolA$STANDUP+as.factor(PoolA$Lse)))
 summary(lm(PoolA$loco~PoolA$LAYINGCOUNTER+as.factor(PoolA$Lse)))
