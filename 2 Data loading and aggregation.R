@@ -1,4 +1,5 @@
-
+#Start----
+{
 library(readr)
 setwd(home) 
 ParityData <- read_csv("ParityData.csv")
@@ -121,6 +122,7 @@ for (lse in 1:7) { # 7 scoring events
     print(lse)
   }
 }
+}# start
 
 #table 1 - numbers of each cow by mobility score
 nrow(SumDataList[[1]])
